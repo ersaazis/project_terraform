@@ -42,23 +42,46 @@ All environments use a shared S3 bucket for remote state, organized by path:
 *   **Global Resources**: Stored in `global/iam/`.
 *   **Env-Specific Roles**: Defined within the specific component's `main.tf` by calling the `iam` module.
 
-## 🛠 Deployment Guide
+## 🛠 Deployment Guide (Start from Zero)
 
-### Prerequisites
-1.  Initialize the backend storage first: `cd global/backend && terraform init && terraform apply`.
-2.  Deploy the Central Hub (Hub VPC): `cd environments/production/us-west-2/control && terraform init && terraform apply`.
+Follow these steps to deploy the entire infrastructure from a blank AWS account.
 
-### Deploying an Environment (e.g., Development)
-To deploy a spoke environment, follow this order:
-1.  **VPCs**: Deploy `application` and `database` VPCs.
-2.  **Peering**: Deploy the `peering` component last to link the spokes to the hub.
+### Step 0: AWS Authentication
 
+Configure your credentials:
 ```bash
-# Example for Development
-cd environments/development/us-west-2/application && terraform apply
-cd environments/development/us-west-2/database    && terraform apply
-cd environments/development/us-west-2/peering     && terraform apply
+# Interactive configuration
+aws configure
 ```
+
+Alternatively, set environment variables:
+```bash
+export AWS_ACCESS_KEY_ID="your_key"
+export AWS_SECRET_ACCESS_KEY="your_secret"
+export AWS_REGION="us-west-2"
+```
+
+### Step 1: Bootstrap State Storage (Global)
+Before any other component, you must create the S3 bucket and DynamoDB table for Terraform state.
+```bash
+cd global/backend
+terraform init
+terraform apply
+```
+
+### Step 2: Deploy the Central Hub (Production)
+The Hub VPC must exist before any spokes can be peered to it.
+```bash
+cd ../../environments/production/us-west-2/control
+terraform init
+terraform apply
+```
+
+### Step 3: Deploy Environment Spokes (e.g., Development)
+Each environment should be deployed in the following order:
+1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform apply`
+2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform apply`
+3.  **Peering**: `cd ../../development/us-west-2/peering && terraform apply` (Connects spokes to the Production Hub)
 
 ## ⚖️ Style Guide
 This project follows the **HashiCorp Terraform Style Guide**:
