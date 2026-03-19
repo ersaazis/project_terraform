@@ -1,3 +1,14 @@
+# Multi-Region AWS Infrastructure (Terraform)
+
+> [!NOTE]
+> **Consultation & Implementation Services**
+> If you are interested in consulting or professional implementation for your company, please feel free to reach out:
+> - **Name**: Ersa Azis Mansyur
+> - **Email**: [eam24maret@gmail.com](mailto:eam24maret@gmail.com)
+> - **LinkedIn**: [linkedin.com/in/ersaazis](https://www.linkedin.com/in/ersaazis/)
+
+---
+
 This project implements a modular, multi-region, and multi-environment AWS infrastructure using Terraform. It follows a **Hub & Spoke** networking architecture with centralized management.
 
 For a detailed map of VPC CIDRs and connectivity rules, see **[PROJECT.md](PROJECT.md)**.
@@ -113,3 +124,6 @@ This project follows the **HashiCorp Terraform Style Guide**:
 *   Clear separation of `terraform.tf`, `providers.tf`, `main.tf`, `variables.tf`, and `outputs.tf`.
 *   Mandatory descriptions for all variables and outputs.
 *   Consistent snake_case naming conventions.
+
+## ⚖️ License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
