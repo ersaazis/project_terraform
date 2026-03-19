@@ -80,9 +80,9 @@ terraform apply
 
 ### Step 3: Deploy Environment Spokes (e.g., Development)
 Each environment should be deployed in the following order:
-1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform init -backend-config=../../../terraform.tfbackend && terraform apply`
-2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform init -backend-config=../../../terraform.tfbackend && terraform apply`
-3.  **Peering**: `cd ../../development/us-west-2/peering && terraform init -backend-config=../../../terraform.tfbackend && terraform apply`
+1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
+2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
+3.  **Peering**: `cd ../../development/us-west-2/peering && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
 
 ## ⚖️ Style Guide
 This project follows the **HashiCorp Terraform Style Guide**:
