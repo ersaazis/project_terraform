@@ -35,6 +35,12 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "mysql_allowed_cidrs" {
+  description = "List of CIDR blocks allowed for MySQL (3306)"
+  type        = list(string)
+  default     = []
+}
+
 variable "vpc_id" {
   description = "ID of the VPC"
   type        = string

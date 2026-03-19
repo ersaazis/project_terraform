@@ -1,6 +1,6 @@
-# multi-region AWS Infrastructure with Terraform
-
 This project implements a modular, multi-region, and multi-environment AWS infrastructure using Terraform. It follows a **Hub & Spoke** networking architecture with centralized management.
+
+For a detailed map of VPC CIDRs and connectivity rules, see **[PROJECT.md](PROJECT.md)**.
 
 ## 📂 Project Structure
 
@@ -63,14 +63,13 @@ export AWS_REGION="us-west-2"
 
 ### Step 2: SSH Key Pair
 
-This project uses an SSH Key Pair named `ersaazis-key` for EC2 access. Create and secure it using the AWS CLI:
+This project manages its own SSH Key Pair using Terraform. This will generate **9 unique keys** (one for each environment and component) and upload them to AWS:
 ```bash
-# Create the key pair and save the private key
-aws ec2 create-key-pair --key-name ersaazis-key --region us-west-2 --query 'KeyMaterial' --output text > ~/.ssh/ersaazis-key.pem
-
-# Set secure permissions
-chmod 400 ~/.ssh/ersaazis-key.pem
+cd global/keys
+terraform init
+terraform apply
 ```
+*(This will automatically save all private keys to `~/.ssh/secret-key-*.pem` with correct permissions.)*
 
 ### Step 3: Bootstrap State Storage (Global)
 Before any other component, you must create the S3 bucket and DynamoDB table for Terraform state.
@@ -94,6 +93,20 @@ Each environment should be deployed in the following order:
 1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
 2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
 3.  **Peering**: `cd ../../development/us-west-2/peering && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
+
+### Step 6: Cleanup (Destroy)
+To avoid dependency errors, destroy resources in the **reverse order** of deployment:
+1.  **Peering**: Destroy all peering connections in all environments.
+2.  **Spokes**: Destroy all Application and Database VPCs in all environments.
+3.  **Hub**: Destroy the `production/us-west-2/control` VPC.
+4.  **Backend**: Finally, destroy the `global/backend` resources.
+
+Example:
+```bash
+# Destroy peering first
+cd environments/development/us-west-2/peering
+terraform destroy -auto-approve
+```
 
 ## ⚖️ Style Guide
 This project follows the **HashiCorp Terraform Style Guide**:

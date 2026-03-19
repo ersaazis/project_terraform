@@ -14,7 +14,8 @@ module "ec2" {
   instance_type    = "t3.micro"
   vpc_id           = module.vpc.vpc_id
   subnet_id        = module.vpc.public_subnet_ids[0]
-  ami_id           = var.ami_id
-  ssh_allowed_cidr = var.control_vpc_cidr
-  key_name         = var.key_name
+  ami_id            = var.ami_id
+  ssh_allowed_cidr  = var.control_vpc_cidr
+  icmp_allowed_cidr = var.control_vpc_cidr
+  key_name          = "secret-key-prod-app-us-west-2"
 }

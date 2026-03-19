@@ -24,6 +24,15 @@ resource "aws_vpc_security_group_ingress_rule" "icmp" {
   to_port           = -1
 }
 
+resource "aws_vpc_security_group_ingress_rule" "mysql" {
+  for_each          = toset(var.mysql_allowed_cidrs)
+  security_group_id = aws_security_group.this.id
+  cidr_ipv4         = each.value
+  from_port         = 3306
+  ip_protocol       = "tcp"
+  to_port           = 3306
+}
+
 resource "aws_vpc_security_group_egress_rule" "allow_all" {
   security_group_id = aws_security_group.this.id
   cidr_ipv4         = "0.0.0.0/0"

@@ -13,7 +13,8 @@ module "ec2" {
   instance_name    = "control-node"
   vpc_id           = module.vpc.vpc_id
   subnet_id        = module.vpc.public_subnet_ids[0]
-  ami_id           = var.ami_id
-  ssh_allowed_cidr = var.admin_cidr
-  key_name         = var.key_name
+  ami_id            = var.ami_id
+  ssh_allowed_cidr  = var.admin_cidr
+  icmp_allowed_cidr = var.admin_cidr
+  key_name          = "secret-key-prod-control-us-west-2"
 }

@@ -1,7 +1,7 @@
 variable "admin_cidr" {
   description = "CIDR block allowed to SSH into the control node"
   type        = string
-  default     = "114.10.147.90/32"
+  default     = "206.189.42.196/32"
 }
 
 variable "ami_id" {
