@@ -46,7 +46,7 @@ All environments use a shared S3 bucket for remote state, organized by path:
 
 Follow these steps to deploy the entire infrastructure from a blank AWS account.
 
-### Step 0: AWS Authentication
+### Step 1: AWS Authentication
 
 Configure your credentials:
 ```bash
@@ -61,7 +61,18 @@ export AWS_SECRET_ACCESS_KEY="your_secret"
 export AWS_REGION="us-west-2"
 ```
 
-### Step 1: Bootstrap State Storage (Global)
+### Step 2: SSH Key Pair
+
+This project uses an SSH Key Pair named `ersaazis-key` for EC2 access. Create and secure it using the AWS CLI:
+```bash
+# Create the key pair and save the private key
+aws ec2 create-key-pair --key-name ersaazis-key --region us-west-2 --query 'KeyMaterial' --output text > ~/.ssh/ersaazis-key.pem
+
+# Set secure permissions
+chmod 400 ~/.ssh/ersaazis-key.pem
+```
+
+### Step 3: Bootstrap State Storage (Global)
 Before any other component, you must create the S3 bucket and DynamoDB table for Terraform state.
 ```bash
 cd global/backend
@@ -70,7 +81,7 @@ terraform apply
 ```
 *(After this step, a `terraform.tfbackend` file will be automatically created in the project root.)*
 
-### Step 2: Deploy the Central Hub (Production)
+### Step 4: Deploy the Central Hub (Production)
 The Hub VPC must exist before any spokes can be peered to it.
 ```bash
 cd ../../environments/production/us-west-2/control
@@ -78,7 +89,7 @@ terraform init -backend-config=../../../terraform.tfbackend
 terraform apply
 ```
 
-### Step 3: Deploy Environment Spokes (e.g., Development)
+### Step 5: Deploy Environment Spokes (e.g., Development)
 Each environment should be deployed in the following order:
 1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
 2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`

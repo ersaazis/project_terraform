@@ -15,4 +15,5 @@ module "ec2" {
   subnet_id        = module.vpc.public_subnet_ids[0]
   ami_id           = var.ami_id
   ssh_allowed_cidr = var.admin_cidr
+  key_name         = var.key_name
 }
