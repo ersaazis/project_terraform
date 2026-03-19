@@ -68,20 +68,21 @@ cd global/backend
 terraform init
 terraform apply
 ```
+*(After this step, a `terraform.tfbackend` file will be automatically created in the project root.)*
 
 ### Step 2: Deploy the Central Hub (Production)
 The Hub VPC must exist before any spokes can be peered to it.
 ```bash
 cd ../../environments/production/us-west-2/control
-terraform init
+terraform init -backend-config=../../../terraform.tfbackend
 terraform apply
 ```
 
 ### Step 3: Deploy Environment Spokes (e.g., Development)
 Each environment should be deployed in the following order:
-1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform apply`
-2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform apply`
-3.  **Peering**: `cd ../../development/us-west-2/peering && terraform apply` (Connects spokes to the Production Hub)
+1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform init -backend-config=../../../terraform.tfbackend && terraform apply`
+2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform init -backend-config=../../../terraform.tfbackend && terraform apply`
+3.  **Peering**: `cd ../../development/us-west-2/peering && terraform init -backend-config=../../../terraform.tfbackend && terraform apply`
 
 ## ⚖️ Style Guide
 This project follows the **HashiCorp Terraform Style Guide**:

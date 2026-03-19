@@ -9,11 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "terraform-state-ersaazis-us-west-2"
-    key            = "env/production/us-west-2/peering/terraform.tfstate"
-    region         = "us-west-2"
-    dynamodb_table = "terraform-locks"
-    encrypt        = true
+    key = "env/production/us-west-2/peering/terraform.tfstate"
   }
 }
 

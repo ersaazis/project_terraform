@@ -9,10 +9,6 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "terraform-state-ersaazis-us-west-2"
-    key            = "env/mirror/us-west-2/application/terraform.tfstate"
-    region         = "us-west-2"
-    dynamodb_table = "terraform-locks"
-    encrypt        = true
+    key = "env/mirror/us-west-2/application/terraform.tfstate"
   }
 }
