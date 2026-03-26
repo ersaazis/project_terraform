@@ -7,45 +7,85 @@ This document provides a detailed map of the AWS infrastructure managed by this 
 The project has evolved from a Hub & Spoke model to a **Full-Mesh Architecture** within each environment. Every VPC (`Control`, `Application`, `Database`) is directly peered with every other VPC to ensure seamless, non-transitive connectivity.
 
 ```mermaid
-graph TD
-    subgraph "Production (Full-Mesh)"
+graph TB
+
+    %% ===== MAIN VPCs =====
+    subgraph "VPC Production Control"
         PC[Control Node]
+    end
+
+    subgraph "VPC Production Application"
         PA[App Node]
+    end
+
+    subgraph "VPC (private) Production Database"
         PD[DB Node]
         PNG[NAT Gateway]
     end
-
-    subgraph "Staging (Full-Mesh)"
+    
+    subgraph "VPC Staging Application"
         SA[App Node]
+    end
+
+    subgraph "VPC (private) Staging Database"
         SD[DB Node]
         SNG[NAT Gateway]
     end
 
-    subgraph "Development (Full-Mesh)"
+    subgraph "VPC Development Application"
         DA[App Node]
+    end
+
+    subgraph "VPC (private) Development Database"
         DD[DB Node]
         DNG[NAT Gateway]
     end
     
-    subgraph "Mirror (Full-Mesh)"
+    subgraph "VPC Mirror Application"
         MA[App Node]
+    end
+
+    subgraph "VPC (private) Mirror Database"
         MD[DB Node]
         MNG[NAT Gateway]
     end
 
-    %% Full-Mesh Peering
-    PC <-->|Peering| PA
-    PC <-->|Peering| PD
-    PA <-->|Peering| PD
+    %% ===== FULL MESH PEERING =====
+    PC <-->|VPC Peering| PA
+    PC <-->|VPC Peering| PD
+    PA <-->|VPC Peering| PD
 
-    %% External Access
-    Internet((Internet)) -->|SSH/Ping| PC
-    PD -.->|Updates/APIs| PNG --> Internet
-    SD -.->|Updates/APIs| SNG --> Internet
-    DD -.->|Updates/APIs| DNG --> Internet
-    MD -.->|Updates/APIs| MNG --> Internet
+    PC <-->|VPC Peering| DD
+    PC <-->|VPC Peering| DA
+    DA <-->|VPC Peering| DD
 
-    %% Service Traffic
+    PC <-->|VPC Peering| SD
+    PC <-->|VPC Peering| SA
+    SA <-->|VPC Peering| SD
+
+    PC <-->|VPC Peering| MD
+    PC <-->|VPC Peering| MA
+    MA <-->|VPC Peering| MD
+
+    %% ===== BOTTOM LAYER (FOR POSITIONING) =====
+    subgraph "External Access"
+        direction LR
+        INGRESS((INGRESS))
+        EGRESS((EGRESS))
+    end
+
+    %% ===== TRAFFIC =====
+    PA -.->|HTTP/HTTPS| INGRESS
+    SA -.->|HTTP/HTTPS| INGRESS
+    DA -.->|HTTP/HTTPS| INGRESS
+    MA -.->|HTTP/HTTPS| INGRESS
+
+    PD -.->|Internet Access| PNG --> EGRESS
+    SD -.->|Internet Access| SNG --> EGRESS
+    DD -.->|Internet Access| DNG --> EGRESS
+    MD -.->|Internet Access| MNG --> EGRESS
+
+    %% ===== SERVICE =====
     PA -->|MySQL:3306| PD
     SA -->|MySQL:3306| SD
     DA -->|MySQL:3306| DD
