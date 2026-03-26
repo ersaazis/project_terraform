@@ -16,6 +16,8 @@ module "ec2" {
   subnet_id        = module.vpc.public_subnet_ids[0]
   ami_id            = var.ami_id
   ssh_allowed_cidr  = var.admin_cidr
+  http_allowed_cidrs   = ["0.0.0.0/0"]
+  https_allowed_cidrs  = ["0.0.0.0/0"]
   icmp_allowed_cidrs = []
   key_name             = "secret-key-prod-control-us-west-2"
   iam_instance_profile = data.terraform_remote_state.iam.outputs.serial_console_instance_profile_name
