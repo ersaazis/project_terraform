@@ -13,5 +13,5 @@ variable "ami_id" {
 variable "key_name" {
   description = "Name of the SSH key pair"
   type        = string
-  default     = "ersaazis-key"
+  default     = "secret-key-prod-control-us-west-2"
 }

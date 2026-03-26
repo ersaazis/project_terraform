@@ -13,29 +13,37 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "control" {
-  backend = "s3"
-  config = {
-    bucket = "terraform-state-ersaazis-us-west-2"
-    key    = "env/production/us-west-2/control/terraform.tfstate"
-    region = "us-west-2"
+locals {
+  backend_config = {
+    for line in split("\n", file("${path.module}/../../../../terraform.tfbackend")) :
+    trimspace(split("=", line)[0]) => trim(trimspace(split("=", line)[1]), "\"")
+    if length(split("=", line)) == 2
   }
 }
 
 data "terraform_remote_state" "application" {
   backend = "s3"
   config = {
-    bucket = "terraform-state-ersaazis-us-west-2"
+    bucket = local.backend_config["bucket"]
+    region = local.backend_config["region"]
     key    = "env/development/us-west-2/application/terraform.tfstate"
-    region = "us-west-2"
   }
 }
 
 data "terraform_remote_state" "database" {
   backend = "s3"
   config = {
-    bucket = "terraform-state-ersaazis-us-west-2"
+    bucket = local.backend_config["bucket"]
+    region = local.backend_config["region"]
     key    = "env/development/us-west-2/database/terraform.tfstate"
-    region = "us-west-2"
+  }
+}
+
+data "terraform_remote_state" "control" {
+  backend = "s3"
+  config = {
+    bucket = local.backend_config["bucket"]
+    region = local.backend_config["region"]
+    key    = "env/production/us-west-2/control/terraform.tfstate"
   }
 }

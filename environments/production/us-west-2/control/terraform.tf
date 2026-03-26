@@ -12,3 +12,22 @@ terraform {
     key = "env/production/us-west-2/control/terraform.tfstate"
   }
 }
+
+locals {
+  backend_config = {
+    for line in split("\n", file("${path.module}/../../../../terraform.tfbackend")) :
+    trimspace(split("=", line)[0]) => trim(trimspace(split("=", line)[1]), "\"")
+    if length(split("=", line)) == 2
+  }
+}
+
+data "terraform_remote_state" "iam" {
+  backend = "s3"
+  config = {
+    bucket = local.backend_config["bucket"]
+    region = local.backend_config["region"]
+    key    = "global/iam/terraform.tfstate"
+  }
+}
+
+# Removed circular dependency on application/database states for bootstrapping

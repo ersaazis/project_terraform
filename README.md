@@ -26,12 +26,12 @@ terraform/
 │           ├── control/     # CENTRAL HUB (Only in Production)
 │           ├── application/ # App Spoke VPC
 │           ├── database/    # Database Spoke VPC (Private)
-│           └── peering/     # Peering Connection to Production Hub
+│   ├── peering/     # Full-mesh peering within environment
 ├── modules/            # Reusable Infrastructure Modules
-│   ├── vpc/            # VPC, Subnets, Gateways
-│   ├── ec2/            # EC2 Instances & Security Groups
-│   ├── peering/        # VPC Peering & Route Updates
-│   └── iam/            # IAM Roles & Instance Profiles
+│   ├── vpc/            # VPC, Subnets, Gateways (NAT Support)
+│   ├── ec2/            # EC2 Instances (Serial Console Support)
+│   ├── peering/        # VPC Peering (for_each based routing)
+│   └── iam/            # IAM Templates
 └── global/             # Account-wide Resources
     ├── backend/        # S3 & DynamoDB for Terraform Remote State
     └── iam/            # Global Users, Groups, and Policies
@@ -49,9 +49,9 @@ All environments use a shared S3 bucket for remote state, organized by path:
 `env/<environment>/<region>/<component>/terraform.tfstate`
 
 ### 3. IAM Strategy
-*   **Reusable Templates**: Stored in `modules/iam/`.
-*   **Global Resources**: Stored in `global/iam/`.
-*   **Env-Specific Roles**: Defined within the specific component's `main.tf` by calling the `iam` module.
+*   **Global Resources**: Account-wide roles (like Serial Console access) are managed in `global/iam/`.
+*   **Module-Based IAM**: Reusable IAM templates are stored in `modules/iam/`.
+*   **Env Integration**: Instances automatically receive the correct IAM profiles via remote state lookups.
 
 ## 🛠 Deployment Guide (Start from Zero)
 
@@ -91,19 +91,31 @@ terraform apply
 ```
 *(After this step, a `terraform.tfbackend` file will be automatically created in the project root.)*
 
-### Step 4: Deploy the Central Hub (Production)
+### Step 4: Deploy Global IAM (Serial Console)
+Provision the centralized IAM roles required for remote troubleshooting:
+```bash
+cd ../iam
+terraform init -backend-config=../../terraform.tfbackend
+terraform apply
+```
+
+### Step 5: Deploy the Shared Infrastructure (Production Hub)
 The Hub VPC must exist before any spokes can be peered to it.
 ```bash
 cd ../../environments/production/us-west-2/control
-terraform init -backend-config=../../../terraform.tfbackend
+terraform init -backend-config=../../../../terraform.tfbackend
 terraform apply
 ```
 
 ### Step 5: Deploy Environment Spokes (e.g., Development)
-Each environment should be deployed in the following order:
-1.  **Application VPC**: `cd ../../development/us-west-2/application && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
-2.  **Database VPC**: `cd ../../development/us-west-2/database && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
-3.  **Peering**: `cd ../../development/us-west-2/peering && terraform init -backend-config=../../../../terraform.tfbackend && terraform apply`
+
+> [!CAUTION]
+> **Mandatory Order**: To avoid `InvalidPermission.Duplicate` errors, you MUST deploy the base components before the peering connection. This is because inter-VPC security rules are centralized in the peering module.
+
+1.  **Application VPC**: `cd environments/development/us-west-2/application && terraform apply`
+2.  **Database VPC**: `cd environments/development/us-west-2/database && terraform apply`
+3.  **Peering**: `cd environments/development/us-west-2/peering && terraform apply`
+    *(Wait for App/DB to complete before running peering.)*
 
 ### Step 6: Cleanup (Destroy)
 To avoid dependency errors, destroy resources in the **reverse order** of deployment:

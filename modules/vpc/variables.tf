@@ -15,6 +15,12 @@ variable "public_subnet_cidrs" {
   default     = []
 }
 
+variable "enable_nat_gateway" {
+  description = "Enable NAT Gateway for private subnets"
+  type        = bool
+  default     = false
+}
+
 variable "vpc_cidr" {
   description = "VPC CIDR block"
   type        = string

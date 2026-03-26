@@ -3,10 +3,10 @@ variable "ami_id" {
   type        = string
 }
 
-variable "icmp_allowed_cidr" {
-  description = "CIDR block allowed for ICMP"
-  type        = string
-  default     = "10.0.0.0/8"
+variable "icmp_allowed_cidrs" {
+  description = "CIDR blocks allowed to send ICMP traffic (ping)"
+  type        = list(string)
+  default     = []
 }
 
 variable "instance_name" {
@@ -44,4 +44,40 @@ variable "mysql_allowed_cidrs" {
 variable "vpc_id" {
   description = "ID of the VPC"
   type        = string
+}
+
+variable "http_allowed_cidrs" {
+  description = "List of CIDR blocks allowed for HTTP (80)"
+  type        = list(string)
+  default     = []
+}
+
+variable "https_allowed_cidrs" {
+  description = "List of CIDR blocks allowed for HTTPS (443)"
+  type        = list(string)
+  default     = []
+}
+
+variable "associate_public_ip_address" {
+  description = "Whether to associate a public IP address with the instance"
+  type        = bool
+  default     = null
+}
+
+variable "enable_serial_console_access" {
+  description = "Whether to enable EC2 Serial Console access for the account in the current region"
+  type        = bool
+  default     = false
+}
+
+variable "os_user" {
+  description = "The default OS user to set the password for (e.g., ec2-user, ubuntu, admin)"
+  type        = string
+  default     = "ec2-user"
+}
+
+variable "iam_instance_profile" {
+  description = "The name of the IAM instance profile to associate with the instance"
+  type        = string
+  default     = null
 }

@@ -17,3 +17,13 @@ output "public_route_table_id" {
   description = "ID of the public route table"
   value       = module.vpc.public_route_table_id
 }
+
+output "private_route_table_ids" {
+  description = "IDs of the private route tables"
+  value       = module.vpc.private_route_table_ids
+}
+
+output "security_group_id" {
+  description = "ID of the security group"
+  value       = module.ec2.security_group_id
+}

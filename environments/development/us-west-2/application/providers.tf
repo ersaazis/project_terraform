@@ -3,7 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Environment = "us-west-2"
+      Environment = "development/us-west-2"
       VPC         = "application"
       ManagedBy   = "Terraform"
     }

@@ -32,3 +32,19 @@ variable "requester_vpc_id" {
   description = "ID of the requester VPC"
   type        = string
 }
+
+variable "requester_security_group_id" {
+  description = "Security group ID of the requester instance"
+  type        = string
+}
+
+variable "accepter_security_group_id" {
+  description = "Security group ID of the accepter instance"
+  type        = string
+}
+
+variable "enable_mysql_rules" {
+  description = "Whether to enable MySQL rules between peered VPCs"
+  type        = bool
+  default     = false
+}

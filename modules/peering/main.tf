@@ -9,17 +9,53 @@ resource "aws_vpc_peering_connection" "this" {
 }
 
 resource "aws_route" "requester" {
-  count = length(var.requester_route_table_ids)
+  for_each = toset(var.requester_route_table_ids)
 
-  route_table_id            = var.requester_route_table_ids[count.index]
+  route_table_id            = each.value
   destination_cidr_block    = var.accepter_vpc_cidr
   vpc_peering_connection_id = aws_vpc_peering_connection.this.id
 }
 
 resource "aws_route" "accepter" {
-  count = length(var.accepter_route_table_ids)
+  for_each = toset(var.accepter_route_table_ids)
 
-  route_table_id            = var.accepter_route_table_ids[count.index]
+  route_table_id            = each.value
   destination_cidr_block    = var.requester_vpc_cidr
   vpc_peering_connection_id = aws_vpc_peering_connection.this.id
+}
+
+# ICMP Rules
+resource "aws_vpc_security_group_ingress_rule" "requester_icmp" {
+  security_group_id = var.requester_security_group_id
+  cidr_ipv4         = var.accepter_vpc_cidr
+  ip_protocol       = "icmp"
+  from_port         = -1
+  to_port           = -1
+}
+
+resource "aws_vpc_security_group_ingress_rule" "accepter_icmp" {
+  security_group_id = var.accepter_security_group_id
+  cidr_ipv4         = var.requester_vpc_cidr
+  ip_protocol       = "icmp"
+  from_port         = -1
+  to_port           = -1
+}
+
+# MySQL Rules (Conditional)
+resource "aws_vpc_security_group_ingress_rule" "requester_mysql" {
+  count             = var.enable_mysql_rules ? 1 : 0
+  security_group_id = var.requester_security_group_id
+  cidr_ipv4         = var.accepter_vpc_cidr
+  ip_protocol       = "tcp"
+  from_port         = 3306
+  to_port           = 3306
+}
+
+resource "aws_vpc_security_group_ingress_rule" "accepter_mysql" {
+  count             = var.enable_mysql_rules ? 1 : 0
+  security_group_id = var.accepter_security_group_id
+  cidr_ipv4         = var.requester_vpc_cidr
+  ip_protocol       = "tcp"
+  from_port         = 3306
+  to_port           = 3306
 }

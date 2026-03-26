@@ -3,6 +3,11 @@ output "ec2_private_ip" {
   value       = module.ec2.private_ip
 }
 
+output "private_route_table_ids" {
+  description = "IDs of the private route tables"
+  value       = module.vpc.private_route_table_ids
+}
+
 output "ec2_public_ip" {
   description = "Public IP of the control node"
   value       = module.ec2.public_ip
@@ -21,4 +26,15 @@ output "vpc_id" {
 output "public_route_table_id" {
   description = "ID of the public route table"
   value       = module.vpc.public_route_table_id
+}
+
+output "serial_console_password" {
+  description = "The generated password for the default OS user for serial console access"
+  value       = module.ec2.serial_console_password
+  sensitive   = true
+}
+
+output "security_group_id" {
+  description = "ID of the security group"
+  value       = module.ec2.security_group_id
 }
