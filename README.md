@@ -18,23 +18,37 @@ For a detailed map of VPC CIDRs and connectivity rules, see **[PROJECT.md](PROJE
 ```text
 terraform/
 ├── environments/
-│   ├── development/    # Development Environment
-│   ├── staging/        # Staging Environment
-│   ├── production/     # Production Environment (Hub VPC Location)
-│   └── mirror/         # Mirror/Testing Environment
-│       └── <region>/   # e.g., us-west-2
-│           ├── control/     # CENTRAL HUB (Only in Production)
-│           ├── application/ # App Spoke VPC
-│           ├── database/    # Database Spoke VPC (Private)
-│   ├── peering/     # Full-mesh peering within environment
+│   ├── production/
+│   │   └── us-west-2/
+│   │       ├── control/     # CENTRAL HUB (Hub VPC)
+│   │       ├── application/ # Production Application Spoke
+│   │       ├── database/    # Production Database Spoke (Private)
+│   │       └── peering/     # Full-mesh connectivity for Production
+│   ├── development/
+│   │   └── us-west-2/
+│   │       ├── application/ # Development Application Spoke
+│   │       ├── database/    # Development Database Spoke (Private)
+│   │       └── peering/     # Full-mesh connectivity for Development
+│   ├── staging/
+│   │   └── us-west-2/
+│   │       ├── application/
+│   │       ├── database/
+│   │       └── peering/
+│   └── mirror/
+│       └── us-west-2/
+│           ├── application/
+│           ├── database/
+│           └── peering/
 ├── modules/            # Reusable Infrastructure Modules
 │   ├── vpc/            # VPC, Subnets, Gateways (NAT Support)
 │   ├── ec2/            # EC2 Instances (Serial Console Support)
 │   ├── peering/        # VPC Peering (for_each based routing)
 │   └── iam/            # IAM Templates
-└── global/             # Account-wide Resources
-    ├── backend/        # S3 & DynamoDB for Terraform Remote State
-    └── iam/            # Global Users, Groups, and Policies
+├── global/             # Account-wide Resources
+│   ├── backend/        # S3 & DynamoDB for Terraform Remote State
+│   ├── iam/            # Global/Account-wide IAM Roles
+│   └── keys/           # Centralized SSH Key Management
+└── terraform.tfbackend # Dynamic Backend Configuration
 ```
 
 ## 🚀 Key Architectural Concepts
