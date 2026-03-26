@@ -117,6 +117,9 @@ terraform apply
 3.  **Peering**: `cd environments/development/us-west-2/peering && terraform apply`
     *(Wait for App/DB to complete before running peering.)*
 
+> [!TIP]
+> **Full-Mesh Reliability**: Ensure all `outputs.tf` files include `private_route_table_ids`. This allows the `peering` module to automatically configure return routes for instances in private subnets (like databases), enabling seamless two-way communication.
+
 ### Step 6: Cleanup (Destroy)
 To avoid dependency errors, destroy resources in the **reverse order** of deployment:
 1.  **Peering**: Destroy all peering connections in all environments.

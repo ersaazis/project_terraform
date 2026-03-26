@@ -92,6 +92,10 @@ All components use environment-specific prefixes (e.g., `production-application-
 - **Target**: Private subnets in Database VPCs.
 - **Benefit**: Secure internet access for OS updates and API calls without a public IP address.
 
+### 4. Private Subnet Routing (Return Paths)
+- **Requirement**: All component modules (`application`, `database`) must export `private_route_table_ids` via remote state.
+- **Logic**: The `peering` module uses these IDs to inject return routes for peered VPCs. Without these, nodes in private subnets can receive traffic but cannot respond (unidirectional connectivity).
+
 ## 🔑 SSH Key Mapping
 Each component has its own dedicated SSH key for improved security.
 
