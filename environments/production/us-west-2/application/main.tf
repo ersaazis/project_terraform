@@ -61,9 +61,9 @@ resource "aws_vpc_security_group_ingress_rule" "monitoring_tempo" {
   for_each          = toset(local.internal_monitoring_cidrs)
   security_group_id = module.ec2.security_group_id
   cidr_ipv4         = each.value
-  from_port         = 4318
+  from_port         = 4319
   ip_protocol       = "tcp"
-  to_port           = 4318
+  to_port           = 4319
   description       = "Allow Tempo from internal network (${each.value})"
 }
 
