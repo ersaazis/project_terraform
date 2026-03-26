@@ -3,10 +3,12 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "${var.state_bucket_prefix}-${random_id.suffix.hex}"
+  bucket        = "${var.state_bucket_prefix}-${random_id.suffix.hex}"
+#  force_destroy = true
 
   lifecycle {
     prevent_destroy = true
+#    prevent_destroy = false
   }
 
   tags = {

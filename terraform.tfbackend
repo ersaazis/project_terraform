@@ -1,4 +1,0 @@
-bucket         = "terraform-state-59ecb004"
-dynamodb_table = "terraform-locks-59ecb004"
-region         = "us-west-2"
-encrypt        = true
