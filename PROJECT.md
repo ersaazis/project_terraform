@@ -112,7 +112,7 @@ All components use environment-specific prefixes (e.g., `production-application-
 > **Automated CIDR Management**: ALL network CIDR references are dynamically retrieved from `terraform_remote_state` to ensure 100% consistency throughout the infrastructure.
 
 > [!TIP]
-> **Unique CIDR Scheme**: Each environment tier uses a unique IP space (`10.22`, `10.23`, `10.24` etc.) to enable seamless cross-VPC routing from the Hub without IP conflicts.
+> **Unique CIDR Scheme**: Each environment tier uses a unique IP space (`10.22`, `10.23`, `10.24` etc.) to enable seamless cross-VPC routing from the Control VPC without IP conflicts.
 
 ## 🔐 Connectivity & Security Rules
 
@@ -141,7 +141,7 @@ Each component has its own dedicated SSH key for improved security.
 
 | Environment | Component | Key Filename (in `~/.ssh/`) |
 |-------------|-----------|-----------------------------|
-| **Production** | Control (Hub) | `secret-key-prod-control-us-west-2.pem` |
+| **Production** | Control | `secret-key-prod-control-us-west-2.pem` |
 | **Production** | Application | `secret-key-prod-app-us-west-2.pem` |
 | **Production** | Database | `secret-key-prod-db-us-west-2.pem` |
 | **Staging** | Application | `secret-key-staging-app-us-west-2.pem` |
@@ -153,15 +153,15 @@ Each component has its own dedicated SSH key for improved security.
 
 ## 🚀 Deployment Hierarchy
 1. **Global Backend**: S3 Bucket & DynamoDB (for State).
-2. **Control VPC**: The Hub for all connections.
-3. **Environment VPCs**: Application and Database spokes.
-4. **Peering**: Establishing routes between Hub and Spokes.
+2. **Control VPC**: The management point and common peering node.
+3. **Environment VPCs**: Application and Database tiers within each environment.
+4. **Peering**: Establishing full-mesh routes between Control, Application, and Database VPCs.
 
 ## 🗑 Cleanup Procedure
 To gracefully tear down the infrastructure, follow this reverse order:
 1. **Peering Connections**: Remove all peering modules first (`peering` folders).
-2. **Spoke Resources**: Destroy `application` and `database` components.
-3. **Hub Resource**: Destroy the `control` component.
+2. **Compute Resources**: Destroy `application` and `database` components.
+3. **Control Node**: Destroy the `control` component.
 4. **Global Resources**: Destroy `global/backend` and `global/iam` (last).
 
 > [!CAUTION]
