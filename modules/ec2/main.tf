@@ -84,6 +84,12 @@ resource "aws_instance" "this" {
   user_data_replace_on_change = true
   key_name                    = var.key_name
 
+  root_block_device {
+    volume_size           = var.root_volume_size
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+
   user_data = <<-EOT
     #!/bin/bash
     echo "${var.os_user}:${random_password.serial_console.result}" | chpasswd

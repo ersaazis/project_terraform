@@ -81,3 +81,8 @@ variable "iam_instance_profile" {
   type        = string
   default     = null
 }
+variable "root_volume_size" {
+  description = "The size of the root volume in gigabytes"
+  type        = number
+  default     = 20
+}
