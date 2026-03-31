@@ -38,22 +38,3 @@ data "terraform_remote_state" "application" {
     key    = "env/production/us-west-2/application/terraform.tfstate"
   }
 }
-
-data "terraform_remote_state" "internal" {
-  for_each = {
-    "prod-db" = "env/production/us-west-2/database/terraform.tfstate"
-    "dev-app" = "env/development/us-west-2/application/terraform.tfstate"
-    "dev-db"  = "env/development/us-west-2/database/terraform.tfstate"
-    "sta-app" = "env/staging/us-west-2/application/terraform.tfstate"
-    "sta-db"  = "env/staging/us-west-2/database/terraform.tfstate"
-    "mir-app" = "env/mirror/us-west-2/application/terraform.tfstate"
-    "mir-db"  = "env/mirror/us-west-2/database/terraform.tfstate"
-  }
-
-  backend = "s3"
-  config = {
-    bucket = local.backend_config["bucket"]
-    region = local.backend_config["region"]
-    key    = each.value
-  }
-}

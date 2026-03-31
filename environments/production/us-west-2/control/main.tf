@@ -27,13 +27,13 @@ locals {
   internal_monitoring_cidrs = [
     module.vpc.vpc_cidr, # Production Control (Current)
     try(data.terraform_remote_state.application.outputs.vpc_cidr, "10.21.0.0/16"), # Production Application
-    try(data.terraform_remote_state.internal["prod-db"].outputs.vpc_cidr, "10.31.0.0/16"),
-    try(data.terraform_remote_state.internal["dev-app"].outputs.vpc_cidr, "10.22.0.0/16"),
-    try(data.terraform_remote_state.internal["dev-db"].outputs.vpc_cidr, "10.32.0.0/16"),
-    try(data.terraform_remote_state.internal["sta-app"].outputs.vpc_cidr, "10.23.0.0/16"),
-    try(data.terraform_remote_state.internal["sta-db"].outputs.vpc_cidr, "10.33.0.0/16"),
-    try(data.terraform_remote_state.internal["mir-app"].outputs.vpc_cidr, "10.24.0.0/16"),
-    try(data.terraform_remote_state.internal["mir-db"].outputs.vpc_cidr, "10.34.0.0/16"),
+    "10.31.0.0/16",
+    "10.22.0.0/16",
+    "10.32.0.0/16",
+    "10.23.0.0/16",
+    "10.33.0.0/16",
+    "10.24.0.0/16",
+    "10.34.0.0/16",
   ]
 }
 
