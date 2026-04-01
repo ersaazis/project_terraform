@@ -40,7 +40,6 @@ module "control_to_database" {
   ))
   requester_security_group_id = try(data.terraform_remote_state.control.outputs.security_group_id, "")
   accepter_security_group_id  = try(data.terraform_remote_state.database.outputs.security_group_id, "")
-  enable_mysql_rules          = true
 }
 
 module "application_to_database" {
@@ -63,5 +62,4 @@ module "application_to_database" {
   ))
   requester_security_group_id = try(data.terraform_remote_state.application.outputs.security_group_id, "")
   accepter_security_group_id  = try(data.terraform_remote_state.database.outputs.security_group_id, "")
-  enable_mysql_rules          = true
 }

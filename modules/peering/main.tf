@@ -41,21 +41,3 @@ resource "aws_vpc_security_group_ingress_rule" "accepter_icmp" {
   to_port           = -1
 }
 
-# MySQL Rules (Conditional)
-resource "aws_vpc_security_group_ingress_rule" "requester_mysql" {
-  count             = var.enable_mysql_rules ? 1 : 0
-  security_group_id = var.requester_security_group_id
-  cidr_ipv4         = var.accepter_vpc_cidr
-  ip_protocol       = "tcp"
-  from_port         = 3306
-  to_port           = 3306
-}
-
-resource "aws_vpc_security_group_ingress_rule" "accepter_mysql" {
-  count             = var.enable_mysql_rules ? 1 : 0
-  security_group_id = var.accepter_security_group_id
-  cidr_ipv4         = var.requester_vpc_cidr
-  ip_protocol       = "tcp"
-  from_port         = 3306
-  to_port           = 3306
-}

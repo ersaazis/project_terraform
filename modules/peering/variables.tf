@@ -43,8 +43,3 @@ variable "accepter_security_group_id" {
   type        = string
 }
 
-variable "enable_mysql_rules" {
-  description = "Whether to enable MySQL rules between peered VPCs"
-  type        = bool
-  default     = false
-}
