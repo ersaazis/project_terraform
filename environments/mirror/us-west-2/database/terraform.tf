@@ -30,13 +30,4 @@ data "terraform_remote_state" "iam" {
   }
 }
 
-data "terraform_remote_state" "control" {
-  backend = "s3"
-  config = {
-    bucket = local.backend_config["bucket"]
-    region = local.backend_config["region"]
-    key    = "env/production/us-west-2/control/terraform.tfstate"
-  }
-}
-
 # Removed circular dependency on application state for bootstrapping

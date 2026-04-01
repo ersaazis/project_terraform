@@ -27,7 +27,7 @@ module "ec2" {
 locals {
   internal_monitoring_cidrs = [
     module.vpc.vpc_cidr, # Production Control (Current)
-    try(data.terraform_remote_state.application.outputs.vpc_cidr, "10.21.0.0/16"), # Production Application
+    "10.21.0.0/16",
     "10.31.0.0/16",
     "10.22.0.0/16",
     "10.32.0.0/16",
