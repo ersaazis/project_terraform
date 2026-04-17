@@ -33,3 +33,8 @@ output "security_group_id" {
   description = "ID of the security group"
   value       = module.ec2.security_group_id
 }
+
+output "ec2_public_ip" {
+  description = "Public IP of the application node"
+  value       = module.ec2.public_ip
+}

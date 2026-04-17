@@ -20,6 +20,7 @@ module "ec2" {
   https_allowed_cidrs  = ["0.0.0.0/0"]
   icmp_allowed_cidrs = []
   key_name             = "secret-key-prod-control-us-west-2"
+  associate_public_ip_address = true
   iam_instance_profile = data.terraform_remote_state.iam.outputs.serial_console_instance_profile_name
   root_volume_size     = 50
 }
